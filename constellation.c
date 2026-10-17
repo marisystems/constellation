@@ -12,7 +12,7 @@
 #define WIDTH 50
 #define HEIGTH 10
 #define NUM_STARS 5
-#define STRLEN 15
+#define STRLEN 8
 
 struct pos {
     int x;
@@ -23,8 +23,8 @@ void random_pos(struct pos p[]) {
     // Generate random number between 0 and WIDTH/HEIGTH
     // and populate given array
     for (int i = 0; i < NUM_STARS; i++) {
-        p[i].x = rand() % (WIDTH - 2) + 1;
-        p[i].y = rand() % (HEIGTH - 2) + 1;
+        p[i].x = rand() % (WIDTH - 3) + 1;
+        p[i].y = rand() % (HEIGTH - 3) + 1;
     }
 }
 
@@ -38,8 +38,8 @@ char *random_name() {
     char static str[STRLEN];
     int i, index;
 
-    for (i = 0; i < STRLEN - 1; i++) {
-        index = rand() & 62;
+    for (i = 0; i <= STRLEN - 1; i++) {
+        index = rand() % 62;
         str[i] = random_char(index);
     }
     str[i] = '\0';
@@ -50,12 +50,6 @@ char *random_name() {
 }
 
     void draw_screen(struct pos *stars, char *name) {
-    printf("Values of stars[] inside draw_screen(): \n");
-
-    for (int i = 0; i < NUM_STARS; i++) {
-        printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
-    }
-
     // Lines
     for (int y = 0; y < HEIGTH; y++) {
         // Columns
@@ -75,25 +69,33 @@ char *random_name() {
 
             // Select inside the box without borders
             } else if (x > 0 || x < WIDTH || y > 0 || y < HEIGTH ) {
-                int a = 0;
+                // So we don't overflow on spaces
+                int print_switch = 0;
 
                 // Loop trough stars array to see if it matches
                 // this happens for each 'block' inside the square
                 for (int z = 0; z < NUM_STARS; z++) {
                     if (x == stars[z].x && y == stars[z].y) {
                         printf("\033[38;5;15m\033[48;5;16m*");
-                        a = 1;
+                        print_switch = 1;
                     }
                 }
                 // Print empty space
-                if(!a) {
+                if(!print_switch) {
                     printf("\033[38;5;15m\033[48;5;16m ");
-                    a = 0;
+                    print_switch = 0;
                 }
             }
         }
         printf("\n");
     }
+
+    // Print constellation name
+    int size = ( WIDTH / 2 ) - STRLEN / 2 - 5;
+    for (int i = 0; i < size ; i++) {
+        printf(" ");
+    }
+    printf("%s sector\n", name);
 }
 
 
@@ -105,12 +107,5 @@ int main() {
 
     char *name = random_name();
     random_pos(stars);
-
-    printf("Values of the stars[]: \n");
-    for (int i = 0; i < NUM_STARS; i++) {
-        printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
-    }
-    printf("---------------- \n\n\n");
-
     draw_screen(stars, name);
 }
