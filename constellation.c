@@ -52,17 +52,26 @@ char *random_name() {
 void draw_screen(struct pos *stars, char *name) {
     printf("constellation.c\n");
 
+    // Lines
     for (int y = 0; y < HEIGTH; y++) {
+        // Columns
         for (int x = 0; x < WIDTH; x++) {
+
+            // Top & Bottom border
             if( y == 0  || y == HEIGTH - 1) {
                 printf("-");
+
+            // Left and Right border
             } else if(x == 0 || x == WIDTH - 1) {
                 printf("|");
+
+            // Contain ANSI CODE inside box (gonna delete soon)
             } else if(x == WIDTH - 2 || y == HEIGTH - 1) {
                 printf("\033[0m");
+
+            // Select inside the box without borders
             } else if (x > 0 || x < WIDTH || y > 0 || y < HEIGTH ) {
-                printf("*");
-            } else {
+                // printf(" ");
                 printf("\033[38;5;15m\033[48;5;16m ");
             }
         }
@@ -76,13 +85,13 @@ int main() {
 
     // Seed random
     srand(time(NULL));
-    // char *name = random_name();
 
+    char *name = random_name();
     random_pos(stars);
 
-    for (int i = 0; i < NUM_STARS; i++) {
-        printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
-    }
+    // for (int i = 0; i < NUM_STARS; i++) {
+    //     printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
+    // }
 
-    // draw_screen(stars, name);
+    draw_screen(stars, name);
 }
