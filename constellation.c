@@ -23,8 +23,8 @@ void random_pos(struct pos p[]) {
     // Generate random number between 0 and WIDTH/HEIGTH
     // and populate given array
     for (int i = 0; i < NUM_STARS; i++) {
-        p[i].x = rand() % WIDTH;
-        p[i].y = rand() % WIDTH;
+        p[i].x = rand() % (WIDTH - 2) + 1;
+        p[i].y = rand() % (HEIGTH - 2) + 1;
     }
 }
 
@@ -49,8 +49,12 @@ char *random_name() {
     return str;
 }
 
-void draw_screen(struct pos *stars, char *name) {
-    printf("constellation.c\n");
+    void draw_screen(struct pos *stars, char *name) {
+    printf("Values of stars[] inside draw_screen(): \n");
+
+    for (int i = 0; i < NUM_STARS; i++) {
+        printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
+    }
 
     // Lines
     for (int y = 0; y < HEIGTH; y++) {
@@ -71,8 +75,21 @@ void draw_screen(struct pos *stars, char *name) {
 
             // Select inside the box without borders
             } else if (x > 0 || x < WIDTH || y > 0 || y < HEIGTH ) {
-                // printf(" ");
-                printf("\033[38;5;15m\033[48;5;16m ");
+                int a = 0;
+
+                // Loop trough stars array to see if it matches
+                // this happens for each 'block' inside the square
+                for (int z = 0; z < NUM_STARS; z++) {
+                    if (x == stars[z].x && y == stars[z].y) {
+                        printf("\033[38;5;15m\033[48;5;16m*");
+                        a = 1;
+                    }
+                }
+                // Print empty space
+                if(!a) {
+                    printf("\033[38;5;15m\033[48;5;16m ");
+                    a = 0;
+                }
             }
         }
         printf("\n");
@@ -89,9 +106,11 @@ int main() {
     char *name = random_name();
     random_pos(stars);
 
-    // for (int i = 0; i < NUM_STARS; i++) {
-    //     printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
-    // }
+    printf("Values of the stars[]: \n");
+    for (int i = 0; i < NUM_STARS; i++) {
+        printf("stars[%d].x = %d  stars[%d].y = %d\n", i, stars[i].x, i, stars[i].y);
+    }
+    printf("---------------- \n\n\n");
 
     draw_screen(stars, name);
 }
